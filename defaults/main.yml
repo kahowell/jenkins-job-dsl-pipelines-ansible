@@ -1,0 +1,10 @@
+---
+jenkins_run_as_service: true
+jenkins_dir: /var/lib/jenkins
+jenkins_user: jenkins
+jenkins_group: jenkins
+jenkins_seed_job:
+  name: ~generate_jobs_from_dsl
+  projects: {}
+  poll_schedule: 'H/2 * * * *'
+  script_patterns: ['*/*/*jobs.groovy']

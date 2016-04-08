@@ -1,0 +1,43 @@
+---
+- name: install plugins
+  get_url:
+    url: "http://updates.jenkins-ci.org/latest/{{ item }}.hpi"
+    dest: "{{ jenkins_dir }}/plugins/"
+    owner: "{{ jenkins_user }}"
+    group: "{{ jenkins_group }}"
+  with_items:
+    - build-pipeline-plugin
+    - cloudbees-folder
+    - delivery-pipeline-plugin
+    - git
+    - git-client
+    - instant-messaging
+    - ircbot
+    - job-dsl
+    - jquery
+    - multiple-scms
+    - parameterized-trigger
+    - saml
+    - scm-api
+    - token-macro
+  tags: plugins
+  notify:
+    - restart jenkins
+
+- name: create seed job
+  file:
+    path: "{{ jenkins_dir }}/jobs/{{ jenkins_seed_job.name }}"
+    state: directory
+    owner: "{{ jenkins_user }}"
+    group: "{{ jenkins_group }}"
+  tags: seed_job
+
+- name: configure seed job
+  template:
+    src: generate_jobs_from_dsl.xml.j2
+    dest: "{{ jenkins_dir }}/jobs/{{ jenkins_seed_job.name }}/config.xml"
+    owner: "{{ jenkins_user }}"
+    group: "{{ jenkins_group }}"
+  tags: seed_job
+  notify:
+    - restart jenkins
